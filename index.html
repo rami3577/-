@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تحدي الذكاء</title>
+    <style>
+        body { font-family: sans-serif; background: #2c3e50; color: white; text-align: center; padding: 20px; }
+        .box { background: white; color: #333; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto; }
+        .timer { font-size: 24px; color: red; font-weight: bold; }
+        button { display: block; width: 100%; padding: 10px; margin: 10px 0; border: none; background: #3498db; color: white; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <div id="game">
+        <p>المستوى: <span id="level">1</span></p>
+        <div class="timer" id="time">10</div>
+        <h3 id="question">تحميل...</h3>
+        <div id="options"></div>
+    </div>
+</div>
+
+<script>
+let level = 1;
+let timeLeft = 10;
+let timer;
+
+const questions = [
+    { q: "كم يساوي 2 + 2؟", o: ["3", "4", "5"], c: 1 },
+    { q: "ما هو عكس كلمة 'كبير'؟", o: ["ضخم", "صغير", "واسع"], c: 1 }
+];
+
+function startTimer() {
+    timeLeft = 10 - (level * 1); // يقل الوقت كلما زاد المستوى
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('time').innerText = timeLeft;
+        if(timeLeft <= 0) {
+            clearInterval(timer);
+            alert("انتهى الوقت! حاول مجدداً.");
+            location.reload();
+        }
+    }, 1000);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    startTimer();
+    const q = questions[level-1];
+    document.getElementById('question').innerText = q.q;
+    const ops = document.getElementById('options');
+    ops.innerHTML = "";
+    q.o.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => {
+            if(i === q.c) {
+                level++;
+                if(level <= questions.length) loadQuestion();
+                else alert("أحسنت! أتممت جميع المستويات.");
+            } else {
+                alert("إجابة خاطئة!");
+                location.reload();
+            }
+        };
+        ops.appendChild(btn);
+    });
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
